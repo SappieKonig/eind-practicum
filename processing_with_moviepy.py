@@ -11,11 +11,10 @@ import matplotlib.pyplot as plt
 
 split_dir = '/home/sappie/PycharmProjects/DoublePendulum/eind-practicum/camera_project_footage'
 videos = glob.glob(split_dir + '/*.mp4')
-videos = list(reversed(list(videos)))
 
 colors = {'green': [.3, .6, .5], 'purple': [.6, .5, .85]}
 
-device = 'cpu'
+device = 'cuda'
 
 def save(frames, dir, name):
     dump_dir = os.path.join(dir, 'dump')
@@ -38,7 +37,7 @@ def process_video(frames, color):
     frames = utils.accentuation_pipeline(frames, color)
     return frames
 
-def sub_split_video(video_file_name, parts: int=10, color='green'):
+def sub_split_video(video_file_name, parts: int=100, color='green'):
     imgs = []
     new_vid = []
     vid = mpy.VideoFileClip(video_file_name)
@@ -47,11 +46,11 @@ def sub_split_video(video_file_name, parts: int=10, color='green'):
         vid.rotation = 0
     # print(video_file_name, success, image)
     # print(image.shape, 'shape')
-    new_file_name = video_file_name[:-4] + '_' + color + '.mp4'
+    new_file_name = video_file_name[:-4] + '_' + color + '_v2.mp4'
     new_file_name = new_file_name.replace('camera_project_footage', 'camera_project_footage_edited')
     # print(new_file_name)
     out = cv2.VideoWriter(new_file_name,
-                          cv2.VideoWriter_fourcc(*'mp4v'), 60, (1920, 1080), True)
+                          cv2.VideoWriter_fourcc(*'mp4v'), 60, (1080, 1920), True)
 
     for i, image in enumerate(vid.iter_frames()):
         imgs.append(image)
@@ -77,10 +76,15 @@ def sub_split_video(video_file_name, parts: int=10, color='green'):
 
 
 for i, video in enumerate(videos):
-    print(f'{i / len(videos) * 100:.2f}% complete', video)
+    if i < 50:
+        continue
+    print(f'{i / len(videos) * 100:.2f}% complete', video, i)
     for color in colors:
-        print(color)
         try:
             sub_split_video(video, color=color)
         except AttributeError as E:
+            print(E)
+        except KeyError as E:
+            print(E)
+        except Exception as E:
             print(E)

@@ -53,7 +53,7 @@ def sub_split_video(video_file_name, parts: int=100, color='green'):
         success, image = vid.read()
         if len(imgs) >= parts:
             frames = np.stack(imgs, axis=0)
-            vid_part = process_video(frames, colors[color])
+            vid_part = process_video(frames, colors[color][::-1])
             for frame in vid_part:
                 out.write(np.stack([frame.cpu().numpy()[0] for _ in range(3)], axis=-1))
             new_vid += [None]

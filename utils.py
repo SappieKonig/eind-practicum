@@ -46,7 +46,6 @@ def filter_image(frames, filter_size=1, decay=.9, avg=True):
 
 
 def accentuation_pipeline(frames, color, channel_weights=(1, 1, 1)):
-    color = color[::-1]
     frames = normalize_colors(frames)
     frames = color_distance(frames, color, channel_weights)
     frames = accentuate_color(frames)
